@@ -1,0 +1,18 @@
+name: "Janitor"
+description: "Cleans up old stuff around a GitHub repo"
+branding:
+  icon: "archive"
+  color: "blue"
+inputs:
+  orgs:
+    description: List of organizations to look for repos (ex. 'org1, org2, org3')
+    required: false
+  user:
+    description: <user> 
+    required: false
+  operations:
+    description: List of cleaning operations to perform. Allowed are 'containers', 'packages', 'releases', 'tags', 'workflow-runs'
+    required: true
+runs:
+  using: 'docker'
+  image: 'dockerfile'
