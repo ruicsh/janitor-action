@@ -1,5 +1,4 @@
 import * as env from 'env-var';
-import { fetch } from 'zx';
 
 export async function req<T>(
 	command: string,

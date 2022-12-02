@@ -2,7 +2,6 @@ import 'zx/globals';
 
 import type * as GH from './@types/github.d';
 import { req } from './lib/github-rest';
-import { getRepos } from './lib/get-repos';
 
 interface IContainerVersion {
 	org: string;
