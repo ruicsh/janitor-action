@@ -1,6 +1,6 @@
 import type * as GH from './@types/github.d';
-import { req } from './lib/github-rest';
 import { getRepos } from './lib/get-repos';
+import { req } from './lib/github-rest';
 
 interface IRelease {
 	repo: string;

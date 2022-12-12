@@ -1,6 +1,6 @@
 import type * as GH from './@types/github.d';
-import { req } from './lib/github-rest';
 import { getRepos } from './lib/get-repos';
+import { req } from './lib/github-rest';
 
 interface IRun {
 	repo: string;
@@ -21,6 +21,7 @@ async function getWorkflowRunsForRepos(repos: string[]) {
 			`GET /repos/${repo}/actions/runs`,
 			{ per_page: '100' }
 		);
+		if (!Array.isArray(workflow_runs)) continue;
 
 		const oldRuns = workflow_runs
 			.filter((run) => diffDays(today, new Date(run.run_started_at)) <= -3)

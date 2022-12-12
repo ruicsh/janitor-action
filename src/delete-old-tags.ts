@@ -1,6 +1,6 @@
 import type * as GH from './@types/github.d';
-import { req } from './lib/github-rest';
 import { getRepos } from './lib/get-repos';
+import { req } from './lib/github-rest';
 
 interface ITag {
 	repo: string;
@@ -15,9 +15,10 @@ async function getTagsToDeleteForRepos(repos: string[]) {
 			`GET /repos/${repo}/git/matching-refs/tags`,
 			{ per_page: '100' }
 		);
+		if (!Array.isArray(repoTags)) continue;
 		if (repoTags.length < 2) continue;
 
-		const oldRepoTags = repoTags
+		const oldRepoTags = (repoTags || [])
 			.slice(0, repoTags.length - 1)
 			.map((tag) => ({ repo, ref: tag.ref }));
 
