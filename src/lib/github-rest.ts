@@ -1,15 +1,16 @@
-import * as env from 'env-var';
+import env from 'env-var';
 
 export async function req<T>(
 	command: string,
 	params: Record<string, string> = {}
 ): Promise<T> {
-	const baseUrl = 'https://api.github.com';
-	const [method, path] = command.split(' ') as [string, string];
-	const url = new URL([baseUrl, path].join(''));
+	const token = env.get('GIT_PASSWORD').required().asString();
+
+	const url = new URL('https://api.github.com');
+	const [method, pathname] = command.split(' ') as [string, string];
+	url.pathname = pathname;
 	const sp = new URLSearchParams(params);
 	url.search = sp.toString();
-	const token = env.get('GIT_PASSWORD').required().asString();
 
 	return fetch(url.href, {
 		method,

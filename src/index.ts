@@ -1,4 +1,4 @@
-import * as env from 'env-var';
+import env from 'env-var';
 import { $ } from 'zx';
 
 import { deleteOldContainers } from './delete-old-containers';
