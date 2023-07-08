@@ -1,5 +1,4 @@
 import env from 'env-var';
-import { $ } from 'zx';
 
 import { deleteOldContainers } from './delete-old-containers';
 import { deleteOldPackages } from './delete-old-packages';
@@ -19,8 +18,6 @@ async function main() {
 		.split(',')
 		.map((o) => o.trim())
 		.filter(Boolean);
-
-	$.verbose = false;
 
 	if (operations.includes('containers')) {
 		await deleteOldContainers({ orgs });

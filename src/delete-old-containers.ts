@@ -1,5 +1,3 @@
-import 'zx/globals';
-
 import type * as GH from './@types/github.d';
 import { req } from './lib/github-rest';
 
@@ -50,10 +48,12 @@ async function getContainerVersionsToDeleteForOrg(org: string) {
 
 async function deleteContainerVersion(pkg: IContainerVersion) {
 	const { org, packageName, versionId } = pkg;
-	await req(
+	const r = await req(
 		`DELETE /orgs/${org}/packages/container/${packageName}/versions/${versionId}`
 	);
 	console.log(org, packageName, versionId);
+
+	console.log(r);
 }
 
 async function deleteOldContainerVersionsForOrg(org: string): Promise<void> {

@@ -1,16 +1,15 @@
-import 'zx/globals';
+import shell from '@tuplo/shell';
 
 async function main() {
+	const $ = shell.$({ verbose: true });
 	const flags = [
-		// '--env INPUT_ORGS=cinemite,cinemite-dev,tuplo',
+		'--env INPUT_ORGS=cinemite,cinemite-dev',
 		'--env INPUT_USER=ruicsh',
-		'--env INPUT_OPERATIONS=workflow-runs',
+		'--env INPUT_OPERATIONS=containers',
 		'--env GIT_PASSWORD',
 		'--env GIT_USER',
 		'ruicsh/janitor-action',
-	]
-		.flatMap((f) => f.split(' '))
-		.filter(Boolean);
+	];
 
 	await $`docker run ${flags}`;
 }
