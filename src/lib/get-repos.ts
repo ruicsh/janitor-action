@@ -1,5 +1,4 @@
-import config from 'src/config';
-
+import config from '../config';
 import { req } from './github-rest';
 
 type IReposResponse = { full_name: string }[];
