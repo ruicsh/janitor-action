@@ -1,22 +1,21 @@
-import type * as GH from './@types/github.d';
 import { req } from './lib/github-rest';
 
-interface IVersion {
+interface IPackageVersion {
 	org: string;
 	packageName: string;
 	versionId: string;
 }
 
-async function getPackagesToDeleteForOrg(org: string): Promise<IVersion[]> {
-	type Response = GH.IPackage[];
+async function getPackagesToDeleteForOrg(org: string) {
+	type Response = IPackage[];
 	const packages = await req<Response>(`GET /orgs/${org}/packages`, {
 		package_type: 'npm',
 	}).then((data) => data.filter((pkg) => pkg.version_count > 1));
 	if (!packages) return [];
 
-	const packagesToDelete: IVersion[] = [];
+	const packagesToDelete: IPackageVersion[] = [];
 	for await (const pkg of packages) {
-		type VersionsResponse = GH.IVersion[];
+		type VersionsResponse = IVersion[];
 		const versions = await req<VersionsResponse>(
 			`GET /orgs/${org}/packages/npm/${pkg.name}/versions`
 		).then((data) =>
@@ -32,10 +31,10 @@ async function getPackagesToDeleteForOrg(org: string): Promise<IVersion[]> {
 		packagesToDelete.push(...oldVersions.slice(1));
 	}
 
-	return packagesToDelete;
+	return packagesToDelete as IPackageVersion[];
 }
 
-async function deletePackage(pkg: IVersion) {
+async function deletePackage(pkg: IPackageVersion) {
 	const { org, packageName, versionId } = pkg;
 	await req(
 		`DELETE /orgs/${org}/packages/npm/${packageName}/versions/${versionId}`

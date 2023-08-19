@@ -1,4 +1,3 @@
-import type * as GH from './@types/github.d';
 import { req } from './lib/github-rest';
 
 interface IContainerVersion {
@@ -8,7 +7,7 @@ interface IContainerVersion {
 }
 
 async function getContainerVersionsToDeleteForOrg(org: string) {
-	type Response = GH.IContainer[];
+	type Response = IContainer[];
 	const containers = await req<Response>(`GET /orgs/${org}/packages`, {
 		package_type: 'container',
 	});
@@ -16,7 +15,7 @@ async function getContainerVersionsToDeleteForOrg(org: string) {
 
 	const packages = [];
 	for await (const container of containers) {
-		type VersionsResponse = GH.IVersion[];
+		type VersionsResponse = IVersion[];
 		const versions = await req<VersionsResponse>(
 			`GET /orgs/${org}/packages/container/${container.name}/versions`
 		);
@@ -33,7 +32,7 @@ async function getContainerVersionsToDeleteForOrg(org: string) {
 	const versionsToDelete = [];
 	for await (const pkg of packages) {
 		const { packageName, versionId } = pkg;
-		type VersionResponse = GH.IVersion;
+		type VersionResponse = IVersion;
 		const version = await req<VersionResponse>(
 			`GET /orgs/${org}/packages/container/${packageName}/versions/${versionId}`
 		);

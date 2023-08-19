@@ -1,4 +1,3 @@
-import type * as GH from './@types/github.d';
 import { getRepos } from './lib/get-repos';
 import { req } from './lib/github-rest';
 
@@ -16,7 +15,7 @@ async function getWorkflowRunsForRepos(repos: string[]) {
 	const today = new Date();
 	const runs: IRun[] = [];
 	for await (const repo of repos) {
-		type Response = { workflow_runs: GH.IWorkflowRun[] };
+		type Response = { workflow_runs: IWorkflowRun[] };
 		const { workflow_runs = [] } = await req<Response>(
 			`GET /repos/${repo}/actions/runs`,
 			{ per_page: '100' }

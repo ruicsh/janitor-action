@@ -1,17 +1,16 @@
-import type * as GH from './@types/github.d';
 import { getRepos } from './lib/get-repos';
 import { req } from './lib/github-rest';
 
-interface IRelease {
+interface IPackageRelease {
 	repo: string;
 	releaseId: string;
 	created_at: string;
 }
 
 async function getReleasesToDeleteForRepos(repos: string[]) {
-	const releases: IRelease[] = [];
+	const releases: IPackageRelease[] = [];
 	for await (const repo of repos) {
-		type Response = GH.IRelease[];
+		type Response = IRelease[];
 		const repoReleases = await req<Response>(`GET /repos/${repo}/releases`, {
 			per_page: '100',
 		});
@@ -31,7 +30,7 @@ async function getReleasesToDeleteForRepos(repos: string[]) {
 	return releases;
 }
 
-async function deleteRelease(release: IRelease) {
+async function deleteRelease(release: IPackageRelease) {
 	const { repo, releaseId } = release;
 	await req(`DELETE /repos/${repo}/releases/${releaseId}`);
 	console.log(repo, releaseId);

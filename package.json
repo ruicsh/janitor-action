@@ -7,10 +7,13 @@
 	},
 	"devDependencies": {
 		"@tuplo/shell": "1.2.0",
-		"prettier": "3.0.2"
+		"@types/node": "20.5.1",
+		"prettier": "3.0.2",
+		"typescript": "5.1.6"
 	},
 	"scripts": {
 		"build": "tsx sh/build.ts",
-		"start": "tsx sh/start.ts"
+		"start": "tsx sh/start.ts",
+		"lint:ts": "tsc --noEmit"
 	}
 }

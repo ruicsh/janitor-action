@@ -1,16 +1,15 @@
-import type * as GH from './@types/github.d';
 import { getRepos } from './lib/get-repos';
 import { req } from './lib/github-rest';
 
-interface ITag {
+interface IRepoTag {
 	repo: string;
 	ref: string;
 }
 
 async function getTagsToDeleteForRepos(repos: string[]) {
-	const tags: ITag[] = [];
+	const tags: IRepoTag[] = [];
 	for await (const repo of repos) {
-		type Response = GH.IReference[];
+		type Response = IReference[];
 		const repoTags = await req<Response>(
 			`GET /repos/${repo}/git/matching-refs/tags`,
 			{ per_page: '100' }
@@ -28,7 +27,7 @@ async function getTagsToDeleteForRepos(repos: string[]) {
 	return tags;
 }
 
-async function deleteTag(tag: ITag) {
+async function deleteTag(tag: IRepoTag) {
 	const { repo, ref } = tag;
 	await req(`DELETE /repos/${repo}/git/${ref}`);
 	console.log(repo, ref);

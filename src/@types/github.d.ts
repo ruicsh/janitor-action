@@ -1,14 +1,14 @@
-export interface IIssue {
+interface IIssue {
 	id: string;
 	number: number;
 	repo: string;
 }
 
-export interface IContainer {
+interface IContainer {
 	name: string;
 }
 
-export interface IVersion {
+interface IVersion {
 	id: string;
 	created_at: string;
 	metadata: {
@@ -16,7 +16,7 @@ export interface IVersion {
 	};
 }
 
-export interface IWorkflowRun {
+interface IWorkflowRun {
 	id: string;
 	run_started_at: string;
 	repository: {
@@ -24,16 +24,16 @@ export interface IWorkflowRun {
 	};
 }
 
-export interface IPackage {
+interface IPackage {
 	name: string;
 	version_count: number;
 }
 
-export interface IRelease {
+interface IRelease {
 	id: string;
 	created_at: string;
 }
 
-export interface IReference {
+interface IReference {
 	ref: string;
 }
