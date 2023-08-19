@@ -1,5 +1,4 @@
-import env from 'env-var';
-
+import config from './config';
 import { deleteOldContainers } from './delete-old-containers';
 import { deleteOldPackages } from './delete-old-packages';
 import { deleteOldReleases } from './delete-old-releases';
@@ -7,9 +6,10 @@ import { deleteOldTags } from './delete-old-tags';
 import { deleteOldWorkflows } from './delete-old-workflow-runs';
 
 async function main() {
-	const orgsList = env.get('INPUT_ORGS').default('').asString();
-	const operationsList = env.get('INPUT_OPERATIONS').default('').asString();
-	const user = env.get('INPUT_USER').asString();
+	const orgsList = config.get('orgs');
+	const operationsList = config.get('operations');
+	const user = config.get('user');
+
 	const orgs = orgsList
 		.split(',')
 		.map((o) => o.trim())

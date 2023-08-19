@@ -1,10 +1,10 @@
-import env from 'env-var';
+import config from 'src/config';
 
 export async function req<T>(
 	command: string,
 	params: Record<string, string> = {}
 ): Promise<T> {
-	const token = env.get('GIT_PASSWORD').required().asString();
+	const token = config.get('github.password');
 
 	const url = new URL('https://api.github.com');
 	const [method, pathname] = command.split(' ') as [string, string];

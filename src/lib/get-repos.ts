@@ -1,4 +1,4 @@
-import env from 'env-var';
+import config from 'src/config';
 
 import { req } from './github-rest';
 
@@ -22,7 +22,7 @@ interface IGetReposArgs {
 export async function getRepos(args: Partial<IGetReposArgs>) {
 	const { orgs = [], user } = args;
 	const repos = [];
-	const gitUser = env.get('GIT_USER').asString();
+	const gitUser = config.get('github.user');
 
 	for await (const org of orgs) {
 		const fresh = await listReposForOrg(org);
