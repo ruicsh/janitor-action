@@ -6,18 +6,9 @@ import { deleteOldTags } from './delete-old-tags';
 import { deleteOldWorkflows } from './delete-old-workflow-runs';
 
 async function main() {
-	const orgsList = config.get('orgs');
-	const operationsList = config.get('operations');
+	const orgs = config.get('orgs');
+	const operations = config.get('operations') as IOperation[];
 	const user = config.get('user');
-
-	const orgs = orgsList
-		.split(',')
-		.map((o) => o.trim())
-		.filter(Boolean);
-	const operations = operationsList
-		.split(',')
-		.map((o) => o.trim())
-		.filter(Boolean);
 
 	if (operations.includes('containers')) {
 		await deleteOldContainers({ orgs });
