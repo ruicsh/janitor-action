@@ -16,7 +16,7 @@ jobs:
         with:
           orgs: <org1>,<org2>
           user: <user1>
-          operations: <containers, packages, releases, tags, workflow-runs>
+          operations: <containers,packages,releases,tags,workflow-runs>
         env:
           GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
           GIT_USER: ${{ secrets.GIT_USER }}
