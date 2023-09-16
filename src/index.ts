@@ -10,6 +10,10 @@ async function main() {
 	const operations = config.get('operations').filter(Boolean) as IOperation[];
 	const user = config.get('user');
 
+	console.log('orgs', orgs);
+	console.log('operations', operations);
+	console.log('user', user);
+
 	if (operations.includes('containers')) {
 		await deleteOldContainers({ orgs });
 	}
