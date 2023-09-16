@@ -4,6 +4,8 @@ import { req } from './github-rest';
 type IReposResponse = { full_name: string }[];
 
 async function listReposForOrg(org: string) {
+	if (!org) return [];
+
 	const response = await req<IReposResponse>(`GET /orgs/${org}/repos`);
 	return (response || []).map((r) => r.full_name);
 }
