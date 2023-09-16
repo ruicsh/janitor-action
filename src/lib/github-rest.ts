@@ -23,7 +23,10 @@ export async function req<T>(
 	})
 		.then((res) => res.text())
 		.then((data) => {
-			if (data.length) return JSON.parse(data);
-			return {};
+			if (data.length) {
+				return JSON.parse(data);
+			}
+
+			return null;
 		});
 }
