@@ -2,19 +2,19 @@
 	"name": "@ruicsh/janitor-action",
 	"license": "MIT",
 	"dependencies": {
-		"convict": "6.2.4",
-		"tsx": "3.12.10"
+		"convict": "6.2.4"
 	},
 	"devDependencies": {
 		"@tuplo/shell": "1.2.0",
 		"@types/convict": "6.1.4",
 		"@types/node": "20.6.2",
 		"prettier": "3.0.3",
+		"tsx": "3.12.10",
 		"typescript": "5.2.2"
 	},
 	"scripts": {
-		"build": "tsx sh/build.ts",
-		"start": "tsx sh/start.ts",
+		"build": "bun sh/build.ts",
+		"start": "bun sh/start.ts",
 		"lint:ts": "tsc --noEmit"
 	}
 }
