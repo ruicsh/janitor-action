@@ -1,11 +1,11 @@
-FROM oven/bun
+FROM node:18-alpine
 
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 
-COPY package.json bun.lockb /app/
-RUN bun install --production --frozen-lockfile
+COPY package.json yarn.lock /app/
+RUN yarn install --production --frozen-lockfile
 
 COPY src/ /app/
 
-CMD ["bun", "/app/index.ts"]
+CMD ["tsx", "/app/index.ts"]
