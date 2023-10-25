@@ -112,24 +112,24 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.18.20.tgz#786c5f41f043b07afb1af37683d7c33668858f6d"
   integrity sha512-kTdfRcSiDfQca/y9QIkng02avJ+NCaQvrMejlsB3RRv5sE9rRoeBPISaZpKxHELzRxZyLvNts1P27W3wV+8geQ==
 
-"@tuplo/shell@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@tuplo/shell/-/shell-1.2.0.tgz#425949d0d4c392657ff2275887e055b266fb9e84"
-  integrity sha512-sGxxAkelEBKs4cCOFp+6bKKJks7SJLzCYwetu4esDoUGBrWk8A9fLNX7iEreMvZFYk7B5v8S+kp+TJ/eq+YnzA==
+"@tuplo/shell@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@tuplo/shell/-/shell-1.2.1.tgz#d9856cfb68f45f58729bea2820f0496404cce041"
+  integrity sha512-x6kRWhr6MlOXCb859j568Jfj77wk+E5cPA1Wa+/tXCggDuWT+y3pAqn0cO+nroVncL8iHvcIBhNQKCbXKHtYog==
 
-"@types/convict@6.1.4":
-  version "6.1.4"
-  resolved "https://registry.yarnpkg.com/@types/convict/-/convict-6.1.4.tgz#ebe724a60bac71611592d2e311f1f64c112461bd"
-  integrity sha512-e2RQtTfJGej3vNXp2YyVVaxm934C+kVGMwwSGyRs1KEg3DETS3jLyVOBHtSKHLH/18lYqxuq+aUlv8oUAXE9sQ==
+"@types/convict@6.1.5":
+  version "6.1.5"
+  resolved "https://registry.yarnpkg.com/@types/convict/-/convict-6.1.5.tgz#d2336e78b5b6bdcbcbdae223e7bd7926a3247d82"
+  integrity sha512-3tsoWY0lxXLDps6RRYwPb+0zOnzDv/cXAruPGngR2mvItsoxdfaX+mAxp3x2xAaEue1bLXa+Jd0JaLOM7YjXKQ==
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@20.8.6":
-  version "20.8.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.8.6.tgz#0dbd4ebcc82ad0128df05d0e6f57e05359ee47fa"
-  integrity sha512-eWO4K2Ji70QzKUqRy6oyJWUeB7+g2cRagT3T/nxYibYcT4y2BDL8lqolRXjTHmkZCdJfIPaY73KbJAZmcryxTQ==
+"@types/node@*", "@types/node@20.8.9":
+  version "20.8.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.8.9.tgz#646390b4fab269abce59c308fc286dcd818a2b08"
+  integrity sha512-UzykFsT3FhHb1h7yD4CA4YhBHq545JC0YnEz41xkipN88eKQtL6rSgocL5tbAP6Ola9Izm/Aw4Ora8He4x0BHg==
   dependencies:
-    undici-types "~5.25.1"
+    undici-types "~5.26.4"
 
 buffer-from@^1.0.0:
   version "1.1.2"
@@ -212,10 +212,10 @@ source-map@^0.6.0:
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
 
-tsx@3.13.0:
-  version "3.13.0"
-  resolved "https://registry.yarnpkg.com/tsx/-/tsx-3.13.0.tgz#f860e511b33fcb41d74df87d7ba239a0b4012dbb"
-  integrity sha512-rjmRpTu3as/5fjNq/kOkOtihgLxuIz6pbKdj9xwP4J5jOLkBxw/rjN5ANw+KyrrOXV5uB7HC8+SrrSJxT65y+A==
+tsx@3.14.0:
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/tsx/-/tsx-3.14.0.tgz#be6e2176b6f210fe8f48124fb6e22e0f075e927b"
+  integrity sha512-xHtFaKtHxM9LOklMmJdI3BEnQq/D5F73Of2E1GDrITi9sgoVkvIsrQUTY1G8FlmGtA+awCI4EBlTRRYxkL2sRg==
   dependencies:
     esbuild "~0.18.20"
     get-tsconfig "^4.7.2"
@@ -228,10 +228,10 @@ typescript@5.2.2:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.2.2.tgz#5ebb5e5a5b75f085f22bc3f8460fba308310fa78"
   integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
 
-undici-types@~5.25.1:
-  version "5.25.3"
-  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-5.25.3.tgz#e044115914c85f0bcbb229f346ab739f064998c3"
-  integrity sha512-Ga1jfYwRn7+cP9v8auvEXN1rX3sWqlayd4HP7OKk4mZWylEmu3KzXDUGrQUN6Ol7qo1gPvB2e5gX6udnyEPgdA==
+undici-types@~5.26.4:
+  version "5.26.5"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-5.26.5.tgz#bcd539893d00b56e964fd2657a4866b221a65617"
+  integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
 yargs-parser@^20.2.7:
   version "20.2.9"
