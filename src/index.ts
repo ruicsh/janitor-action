@@ -4,11 +4,22 @@ import { deleteOldPackages } from './delete-old-packages';
 import { deleteOldReleases } from './delete-old-releases';
 import { deleteOldTags } from './delete-old-tags';
 import { deleteOldWorkflows } from './delete-old-workflow-runs';
+import { cleanListOfStrings } from './helpers';
+
+function getArgs() {
+	const orgs = config.get('orgs');
+	const operations = config.get('operations');
+	const user = config.get('user');
+
+	return {
+		orgs: cleanListOfStrings(orgs),
+		operations: cleanListOfStrings(operations),
+		user,
+	};
+}
 
 async function main() {
-	const orgs = config.get('orgs').filter(Boolean);
-	const operations = config.get('operations').filter(Boolean) as IOperation[];
-	const user = config.get('user');
+	const { orgs, operations, user } = getArgs();
 
 	console.log('orgs', orgs);
 	console.log('operations', operations);
