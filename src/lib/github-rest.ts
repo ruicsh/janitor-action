@@ -6,13 +6,13 @@ export async function req<T>(
 ): Promise<T> {
 	const token = config.get('github.password');
 
-	const url = new URL('https://api.github.com');
+	const uri = new URL('https://api.github.com');
 	const [method, pathname] = command.split(' ') as [string, string];
-	url.pathname = pathname;
+	uri.pathname = pathname;
 	const sp = new URLSearchParams(params);
-	url.search = sp.toString();
+	uri.search = sp.toString();
 
-	return fetch(url.href, {
+	return fetch(uri.href, {
 		method,
 		headers: {
 			Accept: 'application/vnd.github.v3+json',
