@@ -1,7 +1,9 @@
 import config from '../config';
 import { req } from './github-rest';
 
-type IReposResponse = { full_name: string }[];
+type IReposResponse = {
+	full_name: string;
+}[];
 
 async function listReposForOrg(org: string) {
 	if (!org || org === '""') return [];
@@ -15,10 +17,10 @@ async function listReposForUser() {
 	return (response || []).map((r) => r.full_name);
 }
 
-interface IGetReposArgs {
+type IGetReposArgs = {
 	orgs: string[];
 	user: string;
-}
+};
 
 export async function getRepos(args: Partial<IGetReposArgs>) {
 	const { orgs = [], user } = args;

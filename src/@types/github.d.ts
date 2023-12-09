@@ -1,39 +1,39 @@
-interface IIssue {
+type IIssue = {
 	id: string;
 	number: number;
 	repo: string;
-}
+};
 
-interface IContainer {
+type IContainer = {
 	name: string;
-}
+};
 
-interface IVersion {
+type IVersion = {
 	id: string;
 	created_at: string;
 	metadata: {
 		container: { tags: string[] };
 	};
-}
+};
 
-interface IWorkflowRun {
+type IWorkflowRun = {
 	id: string;
 	run_started_at: string;
 	repository: {
 		full_name: string;
 	};
-}
+};
 
-interface IPackage {
+type IPackage = {
 	name: string;
 	version_count: number;
-}
+};
 
-interface IRelease {
+type IRelease = {
 	id: string;
 	created_at: string;
-}
+};
 
-interface IReference {
+type IReference = {
 	ref: string;
-}
+};

@@ -1,10 +1,10 @@
 import { req } from './lib/github-rest';
 
-interface IContainerVersion {
+type IContainerVersion = {
 	org: string;
 	packageName: string;
 	versionId: string;
-}
+};
 
 async function getContainerVersionsToDeleteForOrg(org: string) {
 	type Response = IContainer[];
@@ -63,9 +63,9 @@ async function deleteOldContainerVersionsForOrg(org: string): Promise<void> {
 	}
 }
 
-interface IDeleteOldContainersArgs {
+type IDeleteOldContainersArgs = {
 	orgs?: string[];
-}
+};
 
 export async function deleteOldContainers(args: IDeleteOldContainersArgs) {
 	const { orgs = [] } = args;

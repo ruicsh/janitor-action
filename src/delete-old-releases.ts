@@ -1,11 +1,11 @@
 import { getRepos } from './lib/get-repos';
 import { req } from './lib/github-rest';
 
-interface IPackageRelease {
+type IPackageRelease = {
 	repo: string;
 	releaseId: string;
 	created_at: string;
-}
+};
 
 async function getReleasesToDeleteForRepos(repos: string[]) {
 	const releases: IPackageRelease[] = [];
@@ -36,10 +36,10 @@ async function deleteRelease(release: IPackageRelease) {
 	console.log(repo, releaseId);
 }
 
-interface IDeleteOldReleasesArgs {
+type IDeleteOldReleasesArgs = {
 	orgs?: string[];
 	user?: string;
-}
+};
 
 export async function deleteOldReleases(args: IDeleteOldReleasesArgs) {
 	const { orgs = [], user } = args;

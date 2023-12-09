@@ -1,10 +1,10 @@
 import { getRepos } from './lib/get-repos';
 import { req } from './lib/github-rest';
 
-interface IRepoTag {
+type IRepoTag = {
 	repo: string;
 	ref: string;
-}
+};
 
 async function getTagsToDeleteForRepos(repos: string[]) {
 	const tags: IRepoTag[] = [];
@@ -33,10 +33,10 @@ async function deleteTag(tag: IRepoTag) {
 	console.log(repo, ref);
 }
 
-interface IDeleteOldTags {
+type IDeleteOldTags = {
 	orgs?: string[];
 	user?: string;
-}
+};
 
 export async function deleteOldTags(args: IDeleteOldTags) {
 	const { orgs = [], user } = args;

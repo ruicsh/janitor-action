@@ -1,10 +1,10 @@
 import { getRepos } from './lib/get-repos';
 import { req } from './lib/github-rest';
 
-interface IRun {
+type IRun = {
 	repo: string;
 	runId: string;
-}
+};
 
 function diffDays(date1: Date, date2: Date) {
 	const diff = date2.getTime() - date1.getTime();
@@ -37,10 +37,10 @@ async function deleteWorkflowRun(run: IRun) {
 	await req(`DELETE /repos/${repo}/actions/runs/${runId}`);
 }
 
-interface IDeleteOldWorkflows {
+type IDeleteOldWorkflows = {
 	orgs?: string[];
 	user?: string;
-}
+};
 
 export async function deleteOldWorkflows(args: IDeleteOldWorkflows) {
 	const { orgs = [], user } = args;

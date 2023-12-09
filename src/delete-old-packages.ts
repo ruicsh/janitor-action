@@ -1,10 +1,10 @@
 import { req } from './lib/github-rest';
 
-interface IPackageVersion {
+type IPackageVersion = {
 	org: string;
 	packageName: string;
 	versionId: string;
-}
+};
 
 async function getPackagesToDeleteForOrg(org: string) {
 	type Response = IPackage[];
@@ -50,9 +50,9 @@ async function deleteOldPackagesForOrg(org: string): Promise<void> {
 	}
 }
 
-interface IDeleteOldPackagesArgs {
+type IDeleteOldPackagesArgs = {
 	orgs?: string[];
-}
+};
 
 export async function deleteOldPackages(args: IDeleteOldPackagesArgs) {
 	const { orgs = [] } = args;
