@@ -11,7 +11,9 @@ async function getContainerVersionsToDeleteForOrg(org: string) {
 	const containers = await req<Response>(`GET /orgs/${org}/packages`, {
 		package_type: 'container',
 	});
-	if (!containers) return [];
+	if (!containers) {
+		return [];
+	}
 
 	const packages = [];
 	for await (const container of containers) {
