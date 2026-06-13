@@ -1,5 +1,6 @@
 import { getRepos } from './lib/get-repos';
-import { req } from './lib/github-rest';
+import { reqAll, req } from './lib/github-rest';
+import { pMap } from './helpers';
 
 type IRepoTag = {
 	repo: string;
@@ -7,23 +8,21 @@ type IRepoTag = {
 };
 
 async function getTagsToDeleteForRepos(repos: string[]) {
-	const tags: IRepoTag[] = [];
-	for await (const repo of repos) {
-		type Response = IReference[];
-		const repoTags = await req<Response>(
-			`GET /repos/${repo}/git/matching-refs/tags`,
-			{ per_page: '100' }
+	const tagLists = await pMap(repos, async (repo) => {
+		const repoTags = await reqAll<IReference>(
+			`GET /repos/${repo}/git/matching-refs/tags`
 		);
-		if (!Array.isArray(repoTags)) continue;
-		if (repoTags.length < 2) continue;
+		if (repoTags.length < 2) return [];
 
-		const oldRepoTags = (repoTags || [])
+		return repoTags
 			.slice(0, repoTags.length - 1)
 			.map((tag) => ({ repo, ref: tag.ref }));
+	});
 
-		tags.push(...oldRepoTags);
+	const tags: IRepoTag[] = [];
+	for (const tagList of tagLists) {
+		tags.push(...tagList);
 	}
-
 	return tags;
 }
 
@@ -45,7 +44,5 @@ export async function deleteOldTags(args: IDeleteOldTags) {
 	const tags = await getTagsToDeleteForRepos(repos);
 
 	console.log(`Found ${tags.length} tags to delete`);
-	for await (const tag of tags) {
-		await deleteTag(tag);
-	}
+	await pMap(tags, deleteTag);
 }

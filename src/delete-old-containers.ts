@@ -1,4 +1,5 @@
-import { req } from './lib/github-rest';
+import { reqAll, req } from './lib/github-rest';
+import { pMap } from './helpers';
 
 type IContainerVersion = {
 	org: string;
@@ -7,62 +8,53 @@ type IContainerVersion = {
 };
 
 async function getContainerVersionsToDeleteForOrg(org: string) {
-	type Response = IContainer[];
-	const containers = await req<Response>(`GET /orgs/${org}/packages`, {
+	const containers = await reqAll<IContainer>(`GET /orgs/${org}/packages`, {
 		package_type: 'container',
 	});
-	if (!containers) {
-		return [];
-	}
 
-	const packages = [];
-	for await (const container of containers) {
-		type VersionsResponse = IVersion[];
-		const versions = await req<VersionsResponse>(
+	const versionLists = await pMap(containers, async (container) => {
+		const versions = await reqAll<IVersion>(
 			`GET /orgs/${org}/packages/container/${container.name}/versions`
 		);
+		versions.sort((a, b) => b.created_at.localeCompare(a.created_at));
 
-		const packageVersions = versions.map((version) => ({
+		return versions.slice(1).map((version) => ({
 			org,
 			packageName: container.name,
 			versionId: version.id,
 		}));
+	});
 
-		packages.push(...packageVersions.slice(1));
+	const allPackageVersions: IContainerVersion[] = [];
+	for (const list of versionLists) {
+		allPackageVersions.push(...list);
 	}
 
-	const versionsToDelete = [];
-	for await (const pkg of packages) {
-		const { packageName, versionId } = pkg;
-		type VersionResponse = IVersion;
-		const version = await req<VersionResponse>(
-			`GET /orgs/${org}/packages/container/${packageName}/versions/${versionId}`
+	const versionsToDelete = await pMap(allPackageVersions, async (pkg) => {
+		const version = await req<IVersion>(
+			`GET /orgs/${org}/packages/container/${pkg.packageName}/versions/${pkg.versionId}`
 		);
-
-		if (!version.metadata.container.tags.includes('latest')) {
-			versionsToDelete.push(pkg);
+		if (version?.metadata?.container?.tags?.includes('latest')) {
+			return null;
 		}
-	}
+		return pkg;
+	});
 
-	return versionsToDelete;
+	return versionsToDelete.filter((v): v is IContainerVersion => v !== null);
 }
 
 async function deleteContainerVersion(pkg: IContainerVersion) {
 	const { org, packageName, versionId } = pkg;
-	const r = await req(
+	await req(
 		`DELETE /orgs/${org}/packages/container/${packageName}/versions/${versionId}`
 	);
 	console.log(org, packageName, versionId);
-
-	console.log(r);
 }
 
 async function deleteOldContainerVersionsForOrg(org: string): Promise<void> {
 	const versions = await getContainerVersionsToDeleteForOrg(org);
 	console.log(`Found ${versions.length} old containers on ${org} to delete`);
-	for await (const version of versions) {
-		await deleteContainerVersion(version);
-	}
+	await pMap(versions, deleteContainerVersion);
 }
 
 type IDeleteOldContainersArgs = {
@@ -71,8 +63,5 @@ type IDeleteOldContainersArgs = {
 
 export async function deleteOldContainers(args: IDeleteOldContainersArgs) {
 	const { orgs = [] } = args;
-
-	for await (const org of orgs) {
-		await deleteOldContainerVersionsForOrg(org);
-	}
+	await pMap(orgs, deleteOldContainerVersionsForOrg);
 }

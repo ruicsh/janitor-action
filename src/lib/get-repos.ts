@@ -1,5 +1,6 @@
 import config from '../config';
-import { req } from './github-rest';
+import { reqAll } from './github-rest';
+import { pMap } from '../helpers';
 
 type IReposResponse = {
 	full_name: string;
@@ -8,13 +9,11 @@ type IReposResponse = {
 async function listReposForOrg(org: string) {
 	if (!org || org === '""') return [];
 
-	const response = await req<IReposResponse>(`GET /orgs/${org}/repos`);
-	return (response || []).map((r) => r.full_name);
+	return reqAll<IReposResponse[0]>(`GET /orgs/${org}/repos`);
 }
 
 async function listReposForUser() {
-	const response = await req<IReposResponse>(`GET /user/repos`);
-	return (response || []).map((r) => r.full_name);
+	return reqAll<IReposResponse[0]>(`GET /user/repos`);
 }
 
 type IGetReposArgs = {
@@ -24,17 +23,17 @@ type IGetReposArgs = {
 
 export async function getRepos(args: Partial<IGetReposArgs>) {
 	const { orgs = [], user } = args;
-	const repos = [];
 	const gitUser = config.get('github.user');
 
-	for await (const org of orgs) {
-		const fresh = await listReposForOrg(org);
-		repos.push(...fresh);
+	const repoLists = await pMap(orgs, listReposForOrg);
+	const repos: string[] = [];
+	for (const list of repoLists) {
+		repos.push(...list.map((r) => r.full_name));
 	}
 
 	if (user && user === gitUser) {
-		const fresh = await listReposForUser();
-		repos.push(...fresh);
+		const userRepos = await listReposForUser();
+		repos.push(...userRepos.map((r) => r.full_name));
 	}
 
 	return repos;
