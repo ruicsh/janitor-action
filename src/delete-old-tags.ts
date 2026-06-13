@@ -1,22 +1,26 @@
-import { getRepos } from './lib/get-repos';
-import { reqAll, req } from './lib/github-rest';
+import { getOctokit } from './lib/octokit';
+import { getRepos, type RepoRef } from './lib/get-repos';
 import { pMap } from './helpers';
 
 type IRepoTag = {
+	owner: string;
 	repo: string;
 	ref: string;
 };
 
-async function getTagsToDeleteForRepos(repos: string[]) {
-	const tagLists = await pMap(repos, async (repo) => {
-		const repoTags = await reqAll<IReference>(
-			`GET /repos/${repo}/git/matching-refs/tags`
+async function getTagsToDeleteForRepos(repos: RepoRef[]) {
+	const octokit = getOctokit();
+
+	const tagLists = await pMap(repos, async ({ owner, repo }) => {
+		const repoTags = await octokit.paginate(
+			octokit.rest.git.listMatchingRefs,
+			{ owner, repo, ref: 'tags/', per_page: 100 }
 		);
 		if (repoTags.length < 2) return [];
 
 		return repoTags
 			.slice(0, repoTags.length - 1)
-			.map((tag) => ({ repo, ref: tag.ref }));
+			.map((tag) => ({ owner, repo, ref: tag.ref }));
 	});
 
 	const tags: IRepoTag[] = [];
@@ -27,9 +31,21 @@ async function getTagsToDeleteForRepos(repos: string[]) {
 }
 
 async function deleteTag(tag: IRepoTag) {
-	const { repo, ref } = tag;
-	await req(`DELETE /repos/${repo}/git/${ref}`);
-	console.log(repo, ref);
+	const octokit = getOctokit();
+	try {
+		await octokit.rest.git.deleteRef({
+			owner: tag.owner,
+			repo: tag.repo,
+			// listMatchingRefs returns "refs/tags/v1", deleteRef expects "tags/v1"
+			ref: tag.ref.replace('refs/', ''),
+		});
+		console.log(`${tag.owner}/${tag.repo}`, tag.ref);
+	} catch (error) {
+		console.error(
+			`Failed to delete ref ${tag.owner}/${tag.repo} ${tag.ref}:`,
+			error,
+		);
+	}
 }
 
 type IDeleteOldTags = {

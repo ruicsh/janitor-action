@@ -1,22 +1,27 @@
-import { getRepos } from './lib/get-repos';
-import { reqAll, req } from './lib/github-rest';
+import { getOctokit } from './lib/octokit';
+import { getRepos, type RepoRef } from './lib/get-repos';
 import { pMap } from './helpers';
 
 type IPackageRelease = {
+	owner: string;
 	repo: string;
-	releaseId: string;
+	releaseId: number;
 	created_at: string;
 };
 
-async function getReleasesToDeleteForRepos(repos: string[]) {
-	const releaseLists = await pMap(repos, async (repo) => {
-		const repoReleases = await reqAll<IRelease>(
-			`GET /repos/${repo}/releases`
+async function getReleasesToDeleteForRepos(repos: RepoRef[]) {
+	const octokit = getOctokit();
+
+	const releaseLists = await pMap(repos, async ({ owner, repo }) => {
+		const repoReleases = await octokit.paginate(
+			octokit.rest.repos.listReleases,
+			{ owner, repo, per_page: 100 }
 		);
 		return repoReleases
 			.sort((a, b) => b.created_at.localeCompare(a.created_at))
 			.slice(1)
 			.map((release) => ({
+				owner,
 				repo,
 				releaseId: release.id,
 				created_at: release.created_at,
@@ -31,9 +36,20 @@ async function getReleasesToDeleteForRepos(repos: string[]) {
 }
 
 async function deleteRelease(release: IPackageRelease) {
-	const { repo, releaseId } = release;
-	await req(`DELETE /repos/${repo}/releases/${releaseId}`);
-	console.log(repo, releaseId);
+	const octokit = getOctokit();
+	try {
+		await octokit.rest.repos.deleteRelease({
+			owner: release.owner,
+			repo: release.repo,
+			release_id: release.releaseId,
+		});
+		console.log(`${release.owner}/${release.repo}`, release.releaseId);
+	} catch (error) {
+		console.error(
+			`Failed to delete release ${release.owner}/${release.repo}#${release.releaseId}:`,
+			error,
+		);
+	}
 }
 
 type IDeleteOldReleasesArgs = {

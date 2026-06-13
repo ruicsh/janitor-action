@@ -1,19 +1,22 @@
 import config from '../config';
-import { reqAll } from './github-rest';
+import { getOctokit } from './octokit';
 import { pMap } from '../helpers';
 
-type IReposResponse = {
-	full_name: string;
-}[];
+export type RepoRef = {
+	owner: string;
+	repo: string;
+};
 
 async function listReposForOrg(org: string) {
 	if (!org || org === '""') return [];
 
-	return reqAll<IReposResponse[0]>(`GET /orgs/${org}/repos`);
+	const octokit = getOctokit();
+	return octokit.paginate(octokit.rest.repos.listForOrg, { org, per_page: 100 });
 }
 
 async function listReposForUser() {
-	return reqAll<IReposResponse[0]>(`GET /user/repos`);
+	const octokit = getOctokit();
+	return octokit.paginate(octokit.rest.repos.listForAuthenticatedUser, { per_page: 100 });
 }
 
 type IGetReposArgs = {
@@ -26,14 +29,14 @@ export async function getRepos(args: Partial<IGetReposArgs>) {
 	const gitUser = config.get('github.user');
 
 	const repoLists = await pMap(orgs, listReposForOrg);
-	const repos: string[] = [];
+	const repos: RepoRef[] = [];
 	for (const list of repoLists) {
-		repos.push(...list.map((r) => r.full_name));
+		repos.push(...list.map((r) => ({ owner: r.owner.login, repo: r.name })));
 	}
 
 	if (user && user === gitUser) {
 		const userRepos = await listReposForUser();
-		repos.push(...userRepos.map((r) => r.full_name));
+		repos.push(...userRepos.map((r) => ({ owner: r.owner.login, repo: r.name })));
 	}
 
 	return repos;

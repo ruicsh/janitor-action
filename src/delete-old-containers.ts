@@ -1,54 +1,61 @@
-import { reqAll, req } from './lib/github-rest';
+import { getOctokit } from './lib/octokit';
 import { pMap } from './helpers';
 
 type IContainerVersion = {
 	org: string;
 	packageName: string;
-	versionId: string;
+	versionId: number;
 };
 
 async function getContainerVersionsToDeleteForOrg(org: string) {
-	const containers = await reqAll<IContainer>(`GET /orgs/${org}/packages`, {
-		package_type: 'container',
-	});
+	const octokit = getOctokit();
+
+	const containers = await octokit.paginate(
+		octokit.rest.packages.listPackagesForOrganization,
+		{ org, package_type: 'container', per_page: 100 }
+	);
 
 	const versionLists = await pMap(containers, async (container) => {
-		const versions = await reqAll<IVersion>(
-			`GET /orgs/${org}/packages/container/${container.name}/versions`
+		const versions = await octokit.paginate(
+			octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg,
+			{ org, package_type: 'container', package_name: container.name, per_page: 100 }
 		);
 		versions.sort((a, b) => b.created_at.localeCompare(a.created_at));
 
-		return versions.slice(1).map((version) => ({
-			org,
-			packageName: container.name,
-			versionId: version.id,
-		}));
+		return versions
+			.slice(1)
+			.filter((v) => !v.metadata?.container?.tags?.includes('latest'))
+			.map((version) => ({
+				org,
+				packageName: container.name,
+				versionId: version.id,
+			}));
 	});
 
-	const allPackageVersions: IContainerVersion[] = [];
+	const versionsToDelete: IContainerVersion[] = [];
 	for (const list of versionLists) {
-		allPackageVersions.push(...list);
+		versionsToDelete.push(...list);
 	}
 
-	const versionsToDelete = await pMap(allPackageVersions, async (pkg) => {
-		const version = await req<IVersion>(
-			`GET /orgs/${org}/packages/container/${pkg.packageName}/versions/${pkg.versionId}`
-		);
-		if (version?.metadata?.container?.tags?.includes('latest')) {
-			return null;
-		}
-		return pkg;
-	});
-
-	return versionsToDelete.filter((v): v is IContainerVersion => v !== null);
+	return versionsToDelete;
 }
 
 async function deleteContainerVersion(pkg: IContainerVersion) {
-	const { org, packageName, versionId } = pkg;
-	await req(
-		`DELETE /orgs/${org}/packages/container/${packageName}/versions/${versionId}`
-	);
-	console.log(org, packageName, versionId);
+	const octokit = getOctokit();
+	try {
+		await octokit.rest.packages.deletePackageVersionForOrg({
+			org: pkg.org,
+			package_type: 'container',
+			package_name: pkg.packageName,
+			package_version_id: pkg.versionId,
+		});
+		console.log(pkg.org, pkg.packageName, pkg.versionId);
+	} catch (error) {
+		console.error(
+			`Failed to delete container version ${pkg.org}/${pkg.packageName}#${pkg.versionId}:`,
+			error,
+		);
+	}
 }
 
 async function deleteOldContainerVersionsForOrg(org: string): Promise<void> {

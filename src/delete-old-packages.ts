@@ -1,22 +1,26 @@
-import { reqAll, req } from './lib/github-rest';
+import { getOctokit } from './lib/octokit';
 import { pMap } from './helpers';
 
 type IPackageVersion = {
 	org: string;
 	packageName: string;
-	versionId: string;
+	versionId: number;
 };
 
 async function getPackagesToDeleteForOrg(org: string) {
-	const packages = await reqAll<IPackage>(`GET /orgs/${org}/packages`, {
-		package_type: 'npm',
-	});
+	const octokit = getOctokit();
+
+	const packages = await octokit.paginate(
+		octokit.rest.packages.listPackagesForOrganization,
+		{ org, package_type: 'npm', per_page: 100 }
+	);
 	const packagesWithVersions = packages.filter((pkg) => pkg.version_count > 1);
 
 	const packagesToDelete: IPackageVersion[] = [];
 	const versionLists = await pMap(packagesWithVersions, async (pkg) => {
-		const versions = await reqAll<IVersion>(
-			`GET /orgs/${org}/packages/npm/${pkg.name}/versions`
+		const versions = await octokit.paginate(
+			octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg,
+			{ org, package_type: 'npm', package_name: pkg.name, per_page: 100 }
 		);
 		versions.sort((a, b) => b.created_at.localeCompare(a.created_at));
 		return versions.slice(1).map((version) => ({
@@ -34,11 +38,21 @@ async function getPackagesToDeleteForOrg(org: string) {
 }
 
 async function deletePackage(pkg: IPackageVersion) {
-	const { org, packageName, versionId } = pkg;
-	await req(
-		`DELETE /orgs/${org}/packages/npm/${packageName}/versions/${versionId}`
-	);
-	console.log(org, packageName, versionId);
+	const octokit = getOctokit();
+	try {
+		await octokit.rest.packages.deletePackageVersionForOrg({
+			org: pkg.org,
+			package_type: 'npm',
+			package_name: pkg.packageName,
+			package_version_id: pkg.versionId,
+		});
+		console.log(pkg.org, pkg.packageName, pkg.versionId);
+	} catch (error) {
+		console.error(
+			`Failed to delete package version ${pkg.org}/${pkg.packageName}#${pkg.versionId}:`,
+			error,
+		);
+	}
 }
 
 async function deleteOldPackagesForOrg(org: string): Promise<void> {
