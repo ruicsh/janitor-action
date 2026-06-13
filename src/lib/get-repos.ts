@@ -7,10 +7,16 @@ export type RepoRef = {
 };
 
 async function listReposForOrg(org: string) {
-	if (!org || org === '""') return [];
+	if (!org || org === '""') {
+		console.log(`listReposForOrg: skipping empty org "${org}"`);
+		return [];
+	}
 
 	const octokit = getOctokit();
-	return octokit.paginate(octokit.rest.repos.listForOrg, { org, per_page: 100 });
+	console.log(`listReposForOrg: fetching repos for org "${org}"`);
+	const repos = await octokit.paginate(octokit.rest.repos.listForOrg, { org, per_page: 100 });
+	console.log(`listReposForOrg: found ${repos.length} repos for org "${org}"`);
+	return repos;
 }
 
 async function listReposForUser() {
@@ -25,6 +31,8 @@ type IGetReposArgs = {
 
 export async function getRepos(args: Partial<IGetReposArgs>) {
 	const { orgs = [], user } = args;
+
+	console.log(`getRepos: orgs=${JSON.stringify(orgs)}, user=${JSON.stringify(user)}`);
 
 	const repoLists = await pMap(orgs, listReposForOrg);
 	const repos: RepoRef[] = [];

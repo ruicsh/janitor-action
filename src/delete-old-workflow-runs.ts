@@ -58,6 +58,10 @@ export async function deleteOldWorkflows(args: IDeleteOldWorkflows) {
 	const { orgs = [], user } = args;
 
 	const repos = await getRepos({ orgs, user });
+	console.log(`Found ${repos.length} repos`);
+	for (const repo of repos) {
+		console.log(`  ${repo.owner}/${repo.repo}`);
+	}
 	const runs = await getWorkflowRunsForRepos(repos);
 
 	console.log(`Found ${runs.length} workflow runs to delete`);
