@@ -2,21 +2,25 @@
 	"name": "@ruicsh/janitor-action",
 	"license": "MIT",
 	"dependencies": {
-		"convict": "6.2.4",
-		"tsx": "4.18.0"
+		"convict": "6.2.5",
+		"tsx": "4.22.4"
 	},
 	"devDependencies": {
-		"@tuplo/shell": "1.2.2",
+		"@tuplo/shell": "1.2.5",
 		"@types/convict": "6.1.6",
-		"@types/node": "22.5.0",
-		"npm-check-updates": "17.1.0",
-		"prettier": "3.3.3",
-		"typescript": "5.5.4"
+		"@types/node": "25.9.3",
+		"npm-check-updates": "22.2.3",
+		"prettier": "3.8.4",
+		"typescript": "6.0.3"
 	},
 	"scripts": {
 		"build": "tsx sh/build.ts",
 		"start": "tsx sh/start.ts",
 		"lint:ts": "tsc --noEmit",
 		"upgrade": "npm-check-updates -u && npm install"
+	},
+	"allowScripts": {
+		"fsevents@2.3.3": true,
+		"esbuild@0.28.1": true
 	}
 }
