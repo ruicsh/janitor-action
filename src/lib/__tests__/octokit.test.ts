@@ -24,12 +24,12 @@ describe('octokit', () => {
 		resetOctokit();
 	});
 
-	it('should throw if GIT_PASSWORD is not set', () => {
+	it('should throw if GH_TOKEN is not set', () => {
 		vi.mocked(config.get).mockReturnValue(undefined as never);
-		expect(() => getOctokit()).toThrow('GIT_PASSWORD is not set');
+		expect(() => getOctokit()).toThrow('GH_TOKEN is not set');
 	});
 
-	it('should create an Octokit instance if GIT_PASSWORD is set', () => {
+	it('should create an Octokit instance if GH_TOKEN is set', () => {
 		vi.mocked(config.get).mockReturnValue('fake-token');
 		const octokit = getOctokit();
 		expect(octokit).toBeDefined();

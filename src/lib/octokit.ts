@@ -3,17 +3,27 @@ import type { EndpointDefaults } from '@octokit/types';
 import config from '../config';
 
 let _octokit: Octokit | null = null;
+let _authenticatedUser: string | null = null;
 
 export function resetOctokit(): void {
 	_octokit = null;
+	_authenticatedUser = null;
+}
+
+export async function getAuthenticatedUser(): Promise<string> {
+	if (_authenticatedUser) return _authenticatedUser;
+	const octokit = getOctokit();
+	const { login } = await octokit.rest.users.getAuthenticated();
+	_authenticatedUser = login;
+	return _authenticatedUser;
 }
 
 export function getOctokit(): Octokit {
 	if (_octokit) return _octokit;
 
-	const token = config.get('github.password');
+	const token = config.get('github.token');
 	if (!token) {
-		throw new Error('GIT_PASSWORD is not set');
+		throw new Error('GH_TOKEN is not set');
 	}
 
 	_octokit = new Octokit({

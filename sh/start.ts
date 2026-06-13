@@ -8,8 +8,7 @@ async function main() {
 		// '--env INPUT_USER=ruicsh',
 		'--env INPUT_OPERATIONS=containers,packages,releases,tags,workflow-runs',
 		// '--env INPUT_OPERATIONS=workflow-runs',
-		'--env GIT_PASSWORD',
-		'--env GIT_USER',
+		'--env GH_TOKEN',
 		'ruicsh/janitor-action',
 	];
 

@@ -50,17 +50,11 @@ const config = convict({
 		env: 'INPUT_USER',
 	},
 	github: {
-		user: {
-			doc: 'GitHub user',
+		token: {
+			doc: 'GitHub token',
 			format: String,
 			default: '',
-			env: 'GIT_USER',
-		},
-		password: {
-			doc: 'GitHub password',
-			format: String,
-			default: '',
-			env: 'GIT_PASSWORD',
+			env: 'GH_TOKEN',
 		},
 	},
 });

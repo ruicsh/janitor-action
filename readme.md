@@ -18,6 +18,5 @@ jobs:
           user: <user1>
           operations: <containers,packages,releases,tags,workflow-runs>
         env:
-          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
-          GIT_USER: ${{ secrets.GIT_USER }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 ```

@@ -1,5 +1,4 @@
-import config from '../config';
-import { getOctokit } from './octokit';
+import { getOctokit, getAuthenticatedUser } from './octokit';
 import { pMap } from '../helpers';
 
 export type RepoRef = {
@@ -26,7 +25,6 @@ type IGetReposArgs = {
 
 export async function getRepos(args: Partial<IGetReposArgs>) {
 	const { orgs = [], user } = args;
-	const gitUser = config.get('github.user');
 
 	const repoLists = await pMap(orgs, listReposForOrg);
 	const repos: RepoRef[] = [];
@@ -34,9 +32,12 @@ export async function getRepos(args: Partial<IGetReposArgs>) {
 		repos.push(...list.map((r) => ({ owner: r.owner.login, repo: r.name })));
 	}
 
-	if (user && user === gitUser) {
-		const userRepos = await listReposForUser();
-		repos.push(...userRepos.map((r) => ({ owner: r.owner.login, repo: r.name })));
+	if (user) {
+		const gitUser = await getAuthenticatedUser();
+		if (user === gitUser) {
+			const userRepos = await listReposForUser();
+			repos.push(...userRepos.map((r) => ({ owner: r.owner.login, repo: r.name })));
+		}
 	}
 
 	return repos;
