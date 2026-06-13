@@ -1,5 +1,6 @@
 {
 	"name": "@ruicsh/janitor-action",
+	"type": "module",
 	"license": "MIT",
 	"dependencies": {
 		"convict": "6.2.5",
