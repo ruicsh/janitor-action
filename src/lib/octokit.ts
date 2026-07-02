@@ -13,8 +13,8 @@ export function resetOctokit(): void {
 export async function getAuthenticatedUser(): Promise<string> {
 	if (_authenticatedUser) return _authenticatedUser;
 	const octokit = getOctokit();
-	const { login } = await octokit.rest.users.getAuthenticated();
-	_authenticatedUser = login;
+	const { data } = await octokit.rest.users.getAuthenticated();
+	_authenticatedUser = data.login ?? 'unknown';
 	return _authenticatedUser;
 }
 
